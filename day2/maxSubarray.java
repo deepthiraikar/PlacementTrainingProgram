@@ -1,5 +1,3 @@
-package day2;
-
 public class maxSubarray {
    public static int Subsum(int[] nums){
     if(nums.length==1)
