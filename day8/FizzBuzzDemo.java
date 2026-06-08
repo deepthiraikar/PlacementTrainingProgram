@@ -6,9 +6,9 @@ class FizzBuzz {
     private Semaphore sem = new Semaphore(1);
 
     public FizzBuzz(int n) { this.n = n; }
-
-    public void fizz(Runnable printFizz) throws InterruptedException {
-        while(true){
+    public void fizz(Runnable printFizz){
+        try{
+            while(true){
             sem.acquire();
             if(current > n){ sem.release(); break; }
             if(current % 3 == 0 && current % 5 != 0){
@@ -16,23 +16,27 @@ class FizzBuzz {
                 current++;
             }
             sem.release();
-        }
-    }
-
-    public void buzz(Runnable printBuzz) throws InterruptedException {
-        while(true){
-            sem.acquire();
-            if(current > n){ sem.release(); break; }
-            if(current % 5 == 0 && current % 3 != 0){
-                printBuzz.run();
-                current++;
             }
-            sem.release();
-        }
+        }catch(InterruptedException i){}
     }
 
-    public void fizzbuzz(Runnable printFizzBuzz) throws InterruptedException {
-        while(true){
+    public void buzz(Runnable printBuzz){
+        try{
+            while(true){
+                sem.acquire();
+                if(current > n){ sem.release(); break; }
+                if(current % 5 == 0 && current % 3 != 0){
+                    printBuzz.run();
+                    current++;
+                }
+                sem.release();
+            }
+        }catch(InterruptedException i){}
+    }
+
+    public void fizzbuzz(Runnable printFizzBuzz){
+        try{
+            while(true){
             sem.acquire();
             if(current > n){ sem.release(); break; }
             if(current % 15 == 0){
@@ -40,24 +44,41 @@ class FizzBuzz {
                 current++;
             }
             sem.release();
-        }
+            }
+        }catch(InterruptedException i){}
     }
 
-    public void number(Runnable printNumber) throws InterruptedException {
-        while(true){
-            sem.acquire();
-            if(current > n){ sem.release(); break; }
-            if(current % 3 != 0 && current % 5 != 0){
-                printNumber.run();
-                current++;
+    public void number(Runnable printNumber){
+        try{
+            while(true){
+                sem.acquire();
+                if(current > n){ sem.release(); break; }
+                if(current % 3 != 0 && current % 5 != 0){
+                    printNumber.run();
+                    current++;
+                }
+                sem.release();
             }
-            sem.release();
-        }
+        }catch(InterruptedException i){}
     }
+
 }
 
 public class FizzBuzzDemo {
-    public static void main(String[] args) {
-        FizzBuzz fb = new FizzBuzz(20);
+public static void main(String[] args) {
+       FizzBuzz fb = new FizzBuzz(20);
+        Thread t1=new Thread(()->fb.fizz(
+            ()->System.out.println("fizz")));
+        Thread t2 = new Thread(()->fb.buzz(
+            ()->System.out.println("buzz")));
+        Thread t3 = new Thread(()->fb.fizzbuzz(
+           ()->System.out.println("fizzBuzz")));
+        Thread t4 = new Thread(()->fb.number(
+            ()->System.out.println(Thread.currentThread().getName())));
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
     }
 }
+
