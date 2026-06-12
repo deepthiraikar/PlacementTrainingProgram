@@ -1,4 +1,4 @@
-package train.maven;
+package day.thirteen;
 
 import static org.junit.Assert.assertTrue;
 
